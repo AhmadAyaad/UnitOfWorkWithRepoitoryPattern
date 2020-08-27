@@ -12,7 +12,7 @@ namespace UnitOfWorkSample.Repository
         void Delete(T t);
         Task Update(T t);
         Task<T> GetById(int id);
-        Task<List<T>> GetAll();
+        Task<IEnumerable<T>> GetAll();
         public Task<bool> AddAll(IEnumerable<T> orders);
     }
 }

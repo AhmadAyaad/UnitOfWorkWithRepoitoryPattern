@@ -26,7 +26,7 @@ namespace UnitOfWorkSample.Repository
             _context.Orders.Remove(order);
         }
 
-        public async Task<List<Order>> GetAll()
+        public async Task<IEnumerable<Order>> GetAll()
         {
             return await _context.Orders.AsNoTracking().ToListAsync();
         }

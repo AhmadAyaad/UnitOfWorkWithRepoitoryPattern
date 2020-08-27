@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnitOfWorkSample.Data;
 using UnitOfWorkSample.Entities;
+using UnitOfWorkSample.Proxy;
 
 namespace UnitOfWorkSample.Repository
 {
@@ -32,9 +33,11 @@ namespace UnitOfWorkSample.Repository
             _context.Remove(customer);
         }
 
-        public async Task<List<Customer>> GetAll()
+        public async Task<IEnumerable<Customer>> GetAll()
         {
-            return await _context.Customers.AsNoTracking().ToListAsync();
+
+            var customers = _context.Customers.AsNoTracking().Select(MapToProxy).ToList();
+            return await Task.FromResult(customers);
         }
 
         public async Task<Customer> GetById(int id)
@@ -45,12 +48,24 @@ namespace UnitOfWorkSample.Repository
         public Task Update(Customer customer)
         {
             //First Way to handle sync code in this func
-            
+
             //_context.Entry(customer).State = EntityState.Modified;
             // return Task.FromResult(true);
-            
+
             //second Way
             return Task.Run(() => _context.Entry(customer).State = EntityState.Modified);
+        }
+
+
+        private CustomerProxy MapToProxy(Customer customer)
+        {
+            return new CustomerProxy()
+            {
+                CustomerID = customer.CustomerID,
+                Address = customer.Address,
+                Name = customer.Name,
+                Orders = customer.Orders
+            };
         }
     }
 }
